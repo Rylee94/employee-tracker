@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/Rylee94/employee-tracker#readme",
   "dependencies": {
-    "inquirer": "^8.2.4"
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.5",
+    "mysql": "^2.18.1"
   }
 }
