@@ -85,7 +85,7 @@ function viewAllDepartments() {
 
 function viewAllRoles() {
   dbConnection.query(
-    "SELECT role.id, role.title, role.salary, departments.name AS department FROM role JOIN departments ON role.department_id = departments.id",
+    "SELECT roles.id, roles.title, roles.salary, departments.dep_name AS department FROM roles JOIN departments ON roles.department_id = departments.id",
     function (err, res) {
       if (err) throw err;
       console.log("roles error");
@@ -98,8 +98,7 @@ function viewAllRoles() {
 
 function viewAllEmployees() {
   dbConnection.query(
-    "SELECT employee.id AS employee_id, employee.first_name, employee.last_name, role.title, role.salary, departments.name AS department, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN departments ON role.department_id = departments.id LEFT JOIN employee manager ON employee.manager_id = manager.id",
-
+    "SELECT employee.id AS employee_id, employee.first_name, employee.last_name, roles.title, roles.salary, departments.dep_name AS department, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN roles ON employee.roles_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id LEFT JOIN employee manager ON employee.manager_id = manager.id",
     function (err, res) {
       if (err) throw err;
       console.log("error");
@@ -111,3 +110,4 @@ function viewAllEmployees() {
 }
 
 startPrompt();
+ 
