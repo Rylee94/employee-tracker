@@ -171,7 +171,7 @@ function addRole() {
             "INSERT INTO roles SET ?",
             {
               title: res.title,
-              salary: salary,
+              salary: res.salary,
               department_id: res.department_id,
             },
             function (err, result) {
@@ -181,6 +181,102 @@ function addRole() {
             }
           );
         });
+    }
+  );
+}
+
+function addEmployee() {
+  inquirer
+    .prompt([
+      {
+        name: "first_name",
+        type: "input",
+        message: "Enter employee's first name",
+      },
+      {
+        name: "last_name",
+        type: "input",
+        message: "Enter employee's last name",
+      },
+      {
+        name: "roles",
+        type: "input",
+        message: "Enter employee's role",
+      },
+      {
+        name: "manager_id",
+        type: "input",
+        message: "Enter employee's manager",
+      },
+    ])
+    .then(function (res) {
+      let query = dbConnection.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: res.first_name,
+          last_name: res.last_name,
+          roles_id: res.roles,
+          manager_id: res.manager_id,
+        },
+        function (err, result) {
+          if (err) throw err;
+          console.log("Employee added successfully!");
+          startPrompt();
+        }
+      );
+    });
+}
+
+function updateEmployee() {
+  // Retrieve employee names and IDs from the database
+  dbConnection.query(
+    "SELECT id, CONCAT(first_name, ' ', last_name) AS employee_name FROM employee",
+    function (err, employees) {
+      if (err) throw err;
+
+      // Map employee names to their corresponding IDs
+      const employeeChoices = employees.map((employee) => ({
+        name: employee.employee_name,
+        value: employee.id,
+      }));
+
+      // Retrieve role titles and IDs from the database
+      dbConnection.query("SELECT id, title FROM roles", function (err, roles) {
+        if (err) throw err;
+
+        // Map role titles to their corresponding IDs
+        const roleChoices = roles.map((role) => ({
+          name: role.title,
+          value: role.id,
+        }));
+
+        inquirer
+          .prompt([
+            {
+              name: "employee_id",
+              type: "list",
+              message: "Select the employee whose role you want to update:",
+              choices: employeeChoices,
+            },
+            {
+              name: "new_role_id",
+              type: "list",
+              message: "Select the new role for the employee:",
+              choices: roleChoices,
+            },
+          ])
+          .then(function (res) {
+            dbConnection.query(
+              "UPDATE employee SET roles_id = ? WHERE id = ?",
+              [res.new_role_id, res.employee_id],
+              function (err, result) {
+                if (err) throw err;
+                console.log("Employee role updated successfully!");
+                startPrompt();
+              }
+            );
+          });
+      });
     }
   );
 }
